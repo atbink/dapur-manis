@@ -1,0 +1,335 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import Icon from './Icon.astro';
+import { contact, brand, waMessages } from '../data/site';
+
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  contact.mapsQuery
+)}`;
+const mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
+  contact.mapsQuery
+)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+---
+<section class="section contact" id="kontak" aria-labelledby="kontak-title">
+  <div class="container">
+    <SectionHeading
+      id="kontak-title"
+      index="06"
+      eyebrow="Kontak & Lokasi"
+      title='Mari terhubung <em class="accent">dengan kami.</em>'
+      text="Punya pertanyaan seputar menu, pesanan khusus, atau jadwal Pre-Order? Kami siap melayani Anda melalui WhatsApp atau kunjungi rumah produksi kami."
+    />
+
+    <div class="contact__grid">
+      <!-- Contact Cards & Info -->
+      <div class="contact__cards" data-reveal>
+        <!-- WhatsApp Primary Card -->
+        <div class="info-card info-card--highlight">
+          <div class="info-card__icon info-card__icon--wa">
+            <Icon name="whatsapp" size={26} />
+          </div>
+          <div class="info-card__content">
+            <span class="info-card__label">Pemesanan &amp; Tanya Jawab</span>
+            <h3 class="info-card__val">{contact.whatsappDisplay}</h3>
+            <p class="info-card__sub">
+              Respon cepat setiap hari pada jam operasional.
+            </p>
+          </div>
+          <WhatsAppButton
+            message={waMessages.general}
+            label="Chat WhatsApp"
+            size="sm"
+            class="info-card__btn"
+          />
+        </div>
+
+        <!-- Instagram & Email Card -->
+        <div class="info-card">
+          <div class="info-card__icon">
+            <Icon name="instagram" size={24} />
+          </div>
+          <div class="info-card__content">
+            <span class="info-card__label">Media Sosial</span>
+            <h3 class="info-card__val">@{contact.instagram}</h3>
+            <p class="info-card__sub">
+              Foto behind the scenes, update batch harian, &amp; promo.
+            </p>
+          </div>
+          <a
+            href={`https://instagram.com/${contact.instagram}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--ghost btn--sm info-card__btn"
+          >
+            Ikuti di IG <Icon name="arrow" size={14} />
+          </a>
+        </div>
+
+        <!-- Jam Operasional -->
+        <div class="info-card">
+          <div class="info-card__icon">
+            <Icon name="clock" size={24} />
+          </div>
+          <div class="info-card__content">
+            <span class="info-card__label">Jam Operasional</span>
+            <ul class="hours-list">
+              {contact.hours.map((h) => (
+                <li>
+                  <span class="hours-days">{h.days}</span>
+                  <span class="hours-time">{h.time}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Alamat & Pengiriman -->
+        <div class="info-card">
+          <div class="info-card__icon">
+            <Icon name="pin" size={24} />
+          </div>
+          <div class="info-card__content">
+            <span class="info-card__label">Rumah Produksi &amp; Alamat Pickup</span>
+            <p class="address-text">
+              <strong>{contact.address.street}</strong><br />
+              {contact.address.city}, {contact.address.region} {contact.address.postalCode}
+            </p>
+            <p class="address-note">
+              <em>{contact.address.note}</em>
+            </p>
+            <div class="delivery-badge">
+              <Icon name="truck" size={15} />
+              <span>{contact.delivery}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Maps Embed & Interactive Card -->
+      <div class="contact__map-wrapper" data-reveal style="--delay: 0.15s">
+        <div class="map-card">
+          <div class="map-card__header">
+            <div class="map-card__title">
+              <Icon name="pin" size={18} />
+              <span>Lokasi Dapur Manis</span>
+            </div>
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-arrow map-card__link"
+            >
+              Buka Google Maps <Icon name="arrow" size={14} />
+            </a>
+          </div>
+
+          <div class="map-card__frame">
+            <iframe
+              title={`Peta Lokasi ${brand.name}`}
+              src={mapsEmbedUrl}
+              width="100%"
+              height="100%"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+
+          <div class="map-card__footer">
+            <p>
+              📍 Titik penjemputan pesanan. Harap konfirmasi kedatangan minimal 30 menit sebelumnya agar pesanan disiapkan segar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--cream);
+  }
+  .contact__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 1000px) {
+    .contact__grid {
+      grid-template-columns: 1.15fr 1fr;
+      gap: 3.5rem;
+      align-items: start;
+    }
+  }
+
+  .contact__cards {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .info-card {
+    background: var(--ivory);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .info-card--highlight {
+    background: #fbf6ec;
+    border-color: rgba(185, 120, 63, 0.35);
+  }
+
+  .info-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--cream);
+    display: grid;
+    place-items: center;
+    color: var(--cocoa);
+    flex: none;
+  }
+  .info-card__icon--wa {
+    background: #eaf3e6;
+    color: #45602f;
+  }
+
+  .info-card__content {
+    flex: 1 1 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .info-card__label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--caramel-deep);
+  }
+  .info-card__val {
+    font-size: 1.35rem;
+    color: var(--chocolate);
+    line-height: 1.2;
+  }
+  .info-card__sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .info-card__btn {
+    margin-left: auto;
+  }
+
+  .hours-list {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+    font-size: 0.88rem;
+  }
+  .hours-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 0.25rem;
+  }
+  .hours-days {
+    color: var(--chocolate);
+    font-weight: 500;
+  }
+  .hours-time {
+    color: var(--muted);
+  }
+
+  .address-text {
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-top: 0.2rem;
+  }
+  .address-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .delivery-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    color: var(--cocoa);
+    font-weight: 500;
+  }
+  .delivery-badge :global(svg) {
+    color: var(--caramel);
+    flex: none;
+  }
+
+  /* Map Card */
+  .contact__map-wrapper {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+  .map-card {
+    background: var(--ivory);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+  }
+  .map-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .map-card__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--chocolate);
+  }
+  .map-card__title :global(svg) {
+    color: var(--caramel);
+  }
+  .map-card__link {
+    font-size: 0.82rem;
+  }
+
+  .map-card__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    min-height: 320px;
+    background: var(--beige);
+  }
+
+  .map-card__footer {
+    padding: 1rem 1.5rem;
+    background: var(--cream);
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+    border-top: 1px solid var(--line);
+  }
+</style>

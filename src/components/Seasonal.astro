@@ -1,0 +1,290 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from './SectionHeading.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import Icon from './Icon.astro';
+import { seasonal, waMessages, type SeasonalStatus } from '../data/site';
+import { img, rupiah } from '../lib/utils';
+
+if (!seasonal.enabled) {
+  return null;
+}
+
+const statusBadge: Record<SeasonalStatus, { label: string; class: string }> = {
+  active: { label: 'PO Dibuka', class: 'badge--open' },
+  upcoming: { label: 'Segera Hadir', class: 'badge--soon' },
+  seasonal: { label: 'Koleksi Musiman', class: 'badge--closed' },
+};
+---
+<section class="section seasonal" id="musiman" aria-labelledby="musiman-title">
+  <div class="container">
+    <SectionHeading
+      id="musiman-title"
+      index="05"
+      eyebrow={seasonal.eyebrow}
+      title={seasonal.title}
+      text={seasonal.description}
+      align="center"
+    />
+
+    <div class="seasonal__grid">
+      {seasonal.collections.map((item, index) => {
+        const badge = statusBadge[item.status];
+        return (
+          <article
+            class:list={['card', `card--${item.status}`]}
+            data-reveal
+            style={`--delay: ${index * 0.1}s`}
+          >
+            <div class="card__media">
+              <Image
+                src={img(item.image)}
+                alt={item.name}
+                widths={[400, 600, 800]}
+                sizes="(min-width: 1000px) 360px, (min-width: 640px) 45vw, 90vw"
+                class="card__img"
+                quality={75}
+              />
+              <span class:list={['badge card__badge', badge.class]}>
+                <span class="dot" />
+                {badge.label}
+              </span>
+            </div>
+
+            <div class="card__body">
+              <span class="card__period">
+                <Icon name="calendar" size={14} />
+                {item.period}
+              </span>
+              <h3 class="card__name">{item.name}</h3>
+
+              <div class="card__items">
+                <span class="card__items-label">Isi Paket:</span>
+                <ul class="card__items-list">
+                  {item.items.map((prod) => (
+                    <li>
+                      <Icon name="sparkle" size={13} />
+                      <span>{prod}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div class="card__footer">
+                <div class="card__price">
+                  <span class="card__price-lbl">Mulai dari</span>
+                  <strong class="card__price-val">{rupiah(item.priceFrom)}</strong>
+                </div>
+                <WhatsAppButton
+                  message={waMessages.seasonal(item.name)}
+                  label={item.status === 'active' ? 'Pesan Paket' : 'Tanya Jadwal'}
+                  variant={item.status === 'active' ? 'wa' : 'ghost'}
+                  size="sm"
+                  ariaLabel={`Tanya info ${item.name} via WhatsApp`}
+                />
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <!-- Footnote about custom hampers -->
+    <div class="seasonal__banner" data-reveal style="--delay: 0.2s">
+      <div class="seasonal__banner-content">
+        <Icon name="sparkle" size={24} class="seasonal__banner-icon" />
+        <div>
+          <h4>Kustomisasi Hampers &amp; Kartu Ucapan</h4>
+          <p>
+            Semua paket musiman dapat disesuaikan dengan pita khusus, hangtag custom, dan kartu ucapan bertuliskan nama penerima atau logo perusahaan Anda.
+          </p>
+        </div>
+      </div>
+      <WhatsAppButton
+        message="Halo Dapur Manis! 👋\nSaya ingin berkonsultasi mengenai kustomisasi hampers / bingkisan. Apakah bisa dibuatkan proposal paketnya? Terima kasih."
+        label="Konsultasi Hampers"
+        variant="ghost"
+        size="sm"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .seasonal {
+    background: var(--ivory);
+    position: relative;
+  }
+  .seasonal__grid {
+    display: grid;
+    gap: 1.75rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .seasonal__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .seasonal__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+
+  .card__media {
+    position: relative;
+    aspect-ratio: 16 / 11;
+    overflow: hidden;
+    background: var(--beige);
+  }
+  .card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .card:hover .card__img {
+    transform: scale(1.06);
+  }
+  .card__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.75rem;
+  }
+  .card__period {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--caramel-deep);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .card__name {
+    font-size: 1.45rem;
+    color: var(--chocolate);
+  }
+
+  .card__items {
+    margin-top: 0.25rem;
+    background: rgba(252, 249, 244, 0.7);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+  }
+  .card__items-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.45rem;
+  }
+  .card__items-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem 0.5rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+  .card__items-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .card__items-list :global(svg) {
+    color: var(--caramel);
+    flex: none;
+  }
+
+  .card__footer {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .card__price {
+    display: flex;
+    flex-direction: column;
+  }
+  .card__price-lbl {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .card__price-val {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--chocolate);
+    line-height: 1.1;
+  }
+
+  /* Banner below grid */
+  .seasonal__banner {
+    margin-top: 3rem;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .seasonal__banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 680px;
+  }
+  :global(.seasonal__banner-icon) {
+    color: var(--caramel);
+    flex: none;
+    padding: 10px;
+    background: var(--ivory);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+  }
+  .seasonal__banner h4 {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+  .seasonal__banner p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>

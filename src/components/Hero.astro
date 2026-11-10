@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets';
+import WhatsAppButton from './WhatsAppButton.astro';
+import Icon from './Icon.astro';
+import { brand, poSchedule, waMessages } from '../data/site';
+import { img } from '../lib/utils';
+
+const openBatch = poSchedule.find((b) => b.status === 'open');
+---
+<section class="hero grain" id="beranda" aria-labelledby="hero-title">
+  <div class="hero__media">
+    <Image src={img('hero')} alt="Aneka kue dan pastry rumahan Dapur Manis: donat kentang cokelat, risol, bolu cokelat, pastel, dan nastar" widths={[640, 960, 1400, 1920]} sizes="(min-width: 1000px) 100vw, 100vw" loading="eager" fetchpriority="high" quality={78} class="hero__img" />
+  </div>
+
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <span class="eyebrow hero__eyebrow" data-reveal>{brand.category} · Pre-Order</span>
+      <h1 id="hero-title" class="hero__title" data-reveal style="--delay:.08s">
+        Kue &amp; Pastry <em class="accent">Rumahan.</em>
+      </h1>
+      <p class="hero__sub" data-reveal style="--delay:.16s">Lezat, Fresh, Penuh Cinta.</p>
+      <p class="hero__lead" data-reveal style="--delay:.22s">
+        Dipanggang dalam jumlah terbatas setiap batch, dari bahan premium dan resep keluarga — langsung dari dapur kami ke meja Anda.
+      </p>
+      <div class="hero__ctas" data-reveal style="--delay:.3s">
+        <WhatsAppButton message={waMessages.general} label="Pesan via WhatsApp" />
+        <a href="#produk" class="btn btn--ghost">Lihat Menu <Icon name="arrow" size={18} /></a>
+      </div>
+
+      <ul class="hero__facts" data-reveal style="--delay:.38s">
+        <li><Icon name="wheat" size={18} /> Bahan premium</li>
+        <li><Icon name="leaf" size={18} /> Tanpa pengawet</li>
+        <li><Icon name="truck" size={18} /> Pickup &amp; antar</li>
+      </ul>
+    </div>
+
+    {openBatch && (
+      <a href="#pesanan" class="hero__po" data-reveal style="--delay:.5s">
+        <span class="badge badge--open"><span class="dot"></span>Open PO</span>
+        <strong>{openBatch.name}</strong>
+        <span>Order {openBatch.orderPeriod}</span>
+        <span class="hero__po-ready">Siap {openBatch.readyDate}</span>
+      </a>
+    )}
+
+    <svg class="hero__seal" viewBox="0 0 120 120" aria-hidden="true">
+      <defs><path id="seal-circle" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0" /></defs>
+      <circle cx="60" cy="60" r="58" fill="var(--chocolate)" />
+      <text font-size="10.5" letter-spacing="3.2" fill="#f6efe4" style="font-family: var(--font-sans); font-weight: 600">
+        <textPath href="#seal-circle">HOMEMADE WITH LOVE · SINCE 2019 · </textPath>
+      </text>
+      <path d="M60 50c-3-4.4-10-2.8-10 2.3 0 5 10 10.7 10 10.7s10-5.7 10-10.7c0-5.1-7-6.7-10-2.3z" fill="#e4a870" />
+    </svg>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative; overflow: hidden;
+    background: var(--cream);
+    padding-top: calc(var(--header-h) + 2rem);
+    display: flex; flex-direction: column-reverse;
+  }
+  .hero__media { position: relative; margin: 2rem var(--gutter) 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden; aspect-ratio: 4 / 3.4; }
+  .hero__img { width: 100%; height: 100%; object-fit: cover; object-position: 68% 50%; }
+
+  .hero__inner { position: relative; z-index: 2; }
+  .hero__content { display: grid; gap: 1.25rem; max-width: 600px; }
+  .hero__title { font-size: clamp(3rem, 11vw, 6.4rem); font-weight: 380; line-height: .98; letter-spacing: -.03em; }
+  .hero__title em { display: inline-block; }
+  .hero__sub { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 3.4vw, 1.85rem); color: var(--cocoa); }
+  .hero__lead { color: var(--muted); max-width: 46ch; font-size: 1.02rem; }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .5rem; }
+  .hero__ctas > :global(*) { flex: 1 1 auto; }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; margin-top: 1rem; font-size: .85rem; color: var(--cocoa); }
+  .hero__facts li { display: inline-flex; align-items: center; gap: .45rem; }
+  .hero__facts :global(svg) { color: var(--caramel); }
+
+  .hero__po {
+    position: absolute; z-index: 3; right: calc(var(--gutter) + 1rem); bottom: -1.5rem; transform: translateY(100%);
+    display: grid; gap: .2rem; padding: 1rem 1.2rem; min-width: 210px;
+    background: rgba(252, 249, 244, .94); backdrop-filter: blur(10px);
+    border-radius: var(--radius); box-shadow: var(--shadow); font-size: .82rem; color: var(--muted);
+    transition: transform .3s ease;
+  }
+  .hero__po strong { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 500; color: var(--chocolate); margin-top: .4rem; }
+  .hero__po .badge { justify-self: start; }
+  .hero__po-ready { color: var(--chocolate); font-weight: 600; }
+  .hero__seal { display: none; }
+
+  @media (min-width: 640px) {
+    .hero__ctas > :global(*) { flex: 0 0 auto; }
+  }
+
+  @media (min-width: 1000px) {
+    .hero { display: block; min-height: min(100svh, 900px); padding-top: 0; }
+    .hero__media { position: absolute; inset: 0; margin: 0; border-radius: 0; aspect-ratio: auto; }
+    .hero__img { object-position: 70% 50%; }
+    .hero__media::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--cream) 0%, rgba(246, 239, 228, .92) 30%, rgba(246, 239, 228, .35) 52%, rgba(246, 239, 228, 0) 68%);
+    }
+    .hero__inner { min-height: min(100svh, 900px); display: flex; align-items: center; padding-block: calc(var(--header-h) + 3rem) 5rem; }
+    .hero__po { top: auto; bottom: 4rem; right: var(--gutter); transform: none; }
+    .hero__po:hover { transform: translateY(-4px); }
+    .hero__seal {
+      display: block; position: absolute; width: 112px; height: 112px; right: calc(var(--gutter) + 240px); bottom: 3.2rem;
+      animation: spin 24s linear infinite;
+    }
+  }
+  @media (max-width: 999px) {
+    .hero__po { position: relative; right: auto; bottom: auto; transform: none; margin-top: 2rem; justify-self: start; display: inline-grid; }
+    .hero__inner { display: grid; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

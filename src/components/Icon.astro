@@ -1,0 +1,30 @@
+---
+/** Ikon SVG inline (stroke) — ringan & tanpa dependensi. */
+interface Props { name: string; size?: number; class?: string }
+const { name, size = 20, class: className } = Astro.props;
+
+const paths: Record<string, string> = {
+  whatsapp: '',
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
+  close: '<path d="M6 6l12 12M18 6L6 18"/>',
+  heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  wheat: '<path d="M12 21V9"/><path d="M12 9c-2.5 0-4-1.8-4-4 2.5 0 4 1.8 4 4zM12 9c2.5 0 4-1.8 4-4-2.5 0-4 1.8-4 4zM12 14c-2.5 0-4-1.8-4-4 2.5 0 4 1.8 4 4zM12 14c2.5 0 4-1.8 4-4-2.5 0-4 1.8-4 4zM12 19c-2.5 0-4-1.8-4-4 2.5 0 4 1.8 4 4zM12 19c2.5 0 4-1.8 4-4-2.5 0-4 1.8-4 4z"/>',
+  leaf: '<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-4 6-6 9-8"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  truck: '<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/>',
+  sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+};
+---
+{name === 'whatsapp' ? (
+  <svg class={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.03c-.25.69-1.44 1.33-1.98 1.38-.51.05-.98.24-3.3-.69-2.79-1.1-4.56-3.96-4.7-4.14-.13-.18-1.12-1.49-1.12-2.85 0-1.35.71-2.02.96-2.29.25-.28.55-.35.73-.35l.53.01c.17 0 .4-.06.62.48.25.6.83 2.06.9 2.21.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.29.15.47.12.64-.07.18-.2.74-.86.94-1.16.19-.3.39-.25.65-.15.27.1 1.7.8 1.99.95.29.15.49.22.56.34.07.13.07.72-.18 1.42z"/>
+  </svg>
+) : (
+  <svg class={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={paths[name] ?? ''} />
+)}

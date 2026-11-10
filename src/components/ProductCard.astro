@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { waMessages, categories, type Product } from '../data/site';
+import { img, rupiah } from '../lib/utils';
+
+interface Props { product: Product; index?: number }
+const { product: p, index = 0 } = Astro.props;
+const available = p.available !== false;
+const price = rupiah(p.price);
+const categoryName = categories.find((c) => c.id === p.category)?.name ?? '';
+---
+<article class:list={['pc', !available && 'pc--off']} data-category={p.category} data-reveal style={`--delay:${(index % 4) * 0.06}s`}>
+  <div class="pc__media">
+    <Image src={img(p.image)} alt={p.name} widths={[360, 540, 720]} sizes="(min-width: 1200px) 280px, (min-width: 1000px) 24vw, (min-width: 640px) 46vw, 92vw" class="pc__img" quality={74} />
+    {(p.badge || !available) && <span class="badge pc__badge">{available ? p.badge : 'Sedang Libur'}</span>}
+  </div>
+  <div class="pc__body">
+    <span class="pc__cat">{categoryName}</span>
+    <h3 class="pc__name">{p.name}</h3>
+    <p class="pc__desc">{p.description}</p>
+    <div class="pc__foot">
+      <p class="pc__price"><strong>{price}</strong><span>{p.unit}</span></p>
+      <WhatsAppButton
+        message={waMessages.product(p.name, price, p.unit)}
+        label={available ? 'Pesan' : 'Libur'}
+        size="sm"
+        disabled={!available}
+        ariaLabel={`Pesan ${p.name} via WhatsApp`}
+      />
+    </div>
+  </div>
+</article>
+
+<style>
+  .pc {
+    display: flex; flex-direction: column; height: 100%;
+    background: var(--ivory); border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: var(--shadow-sm); border: 1px solid var(--line);
+    transition: box-shadow .4s ease, transform .4s ease;
+  }
+  .pc:hover { box-shadow: var(--shadow); }
+  .pc__media { position: relative; aspect-ratio: 4 / 3.6; overflow: hidden; background: var(--beige); }
+  .pc__img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.2, .7, .2, 1); }
+  .pc:hover .pc__img { transform: scale(1.05); }
+  .pc__badge { position: absolute; top: 1rem; left: 1rem; box-shadow: var(--shadow-sm); }
+  .pc__body { display: flex; flex-direction: column; gap: .45rem; padding: 1.25rem 1.25rem 1.35rem; flex: 1; }
+  .pc__cat { font-size: .7rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--caramel-deep); }
+  .pc__name { font-size: 1.45rem; }
+  .pc__desc { font-size: .9rem; color: var(--muted); line-height: 1.55; }
+  .pc__foot { margin-top: auto; padding-top: 1rem; display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; border-top: 1px dashed var(--line); }
+  .pc__price { display: grid; line-height: 1.2; }
+  .pc__price strong { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 500; color: var(--chocolate); }
+  .pc__price span { font-size: .78rem; color: var(--muted); }
+  .pc--off .pc__img { filter: grayscale(.6); opacity: .8; }
+  .pc[hidden] { display: none; }
+</style>

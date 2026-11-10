@@ -1,0 +1,96 @@
+---
+import Icon from './Icon.astro';
+import { waMessages } from '../data/site';
+import { waLink } from '../lib/utils';
+---
+<aside class="floating-wa" aria-label="Aksi Cepat WhatsApp">
+  <a
+    href={waLink(waMessages.general)}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="floating-wa__btn"
+    aria-label="Chat WhatsApp Dapur Manis"
+  >
+    <div class="floating-wa__pulse"></div>
+    <div class="floating-wa__icon">
+      <Icon name="whatsapp" size={26} />
+    </div>
+    <span class="floating-wa__text">
+      <strong>Pesan via WhatsApp</strong>
+      <small>Online &bull; Respon Cepat</small>
+    </span>
+  </a>
+</aside>
+
+<style>
+  .floating-wa {
+    position: fixed;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    z-index: 40;
+    pointer-events: none;
+  }
+  .floating-wa__btn {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.15rem 0.6rem 0.6rem;
+    background: #25d366;
+    color: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45);
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+    text-decoration: none;
+    position: relative;
+  }
+  .floating-wa__btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.6);
+  }
+  .floating-wa__pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #25d366;
+    opacity: 0.5;
+    animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    z-index: -1;
+  }
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(1.2, 1.4);
+      opacity: 0;
+    }
+  }
+
+  .floating-wa__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.12);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .floating-wa__text {
+    display: none;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: left;
+  }
+  .floating-wa__text strong {
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+  .floating-wa__text small {
+    font-size: 0.72rem;
+    opacity: 0.92;
+  }
+
+  @media (min-width: 640px) {
+    .floating-wa__text {
+      display: flex;
+    }
+  }
+</style>

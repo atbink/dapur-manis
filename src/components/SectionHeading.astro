@@ -1,0 +1,18 @@
+---
+interface Props { eyebrow: string; title: string; text?: string; align?: 'left' | 'center'; index?: string; id?: string }
+const { eyebrow, title, text, align = 'left', index, id } = Astro.props;
+---
+<header class:list={['sh', `sh--${align}`]} data-reveal>
+  <span class="eyebrow">{index && <span class="sh__index">{index}</span>}{eyebrow}</span>
+  <h2 class="sh__title" id={id} set:html={title} />
+  {text && <p class="sh__text">{text}</p>}
+  <slot />
+</header>
+
+<style>
+  .sh { display: grid; gap: 1rem; max-width: 640px; margin-bottom: clamp(2.5rem, 5vw, 3.5rem); }
+  .sh--center { margin-inline: auto; text-align: center; justify-items: center; }
+  .sh__index { font-family: var(--font-serif); font-style: italic; letter-spacing: 0; font-size: .95rem; margin-right: .1rem; }
+  .sh__title { font-size: clamp(2rem, 5vw, 3.25rem); }
+  .sh__text { color: var(--muted); font-size: 1.05rem; max-width: 52ch; }
+</style>

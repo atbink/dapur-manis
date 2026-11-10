@@ -1,0 +1,124 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { navigation, waMessages } from '../data/site';
+---
+<header class="header" id="site-header">
+  <div class="container header__inner">
+    <Logo />
+
+    <nav class="nav" aria-label="Navigasi utama">
+      <ul class="nav__list">
+        {navigation.map((item) => <li><a class="nav__link" href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <WhatsAppButton message={waMessages.general} label="WhatsApp" size="sm" class="header__wa" />
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu">
+        <Icon name="menu" size={24} class="i-open" />
+        <Icon name="close" size={24} class="i-close" />
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav class="container" aria-label="Navigasi seluler">
+      <ul>
+        {navigation.map((item, i) => (
+          <li><a class="mobile-menu__link" href={item.href}><span>0{i + 1}</span>{item.label}</a></li>
+        ))}
+      </ul>
+      <WhatsAppButton message={waMessages.general} label="Pesan via WhatsApp" class="mobile-menu__cta" />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: fixed; inset: 0 0 auto; z-index: 50; height: var(--header-h);
+    transition: background-color .35s ease, box-shadow .35s ease, backdrop-filter .35s ease;
+  }
+  .header.is-scrolled, .header.is-open {
+    background: rgba(252, 249, 244, .88);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+
+  .nav { display: none; }
+  .nav__list { display: flex; gap: 2.2rem; }
+  .nav__link { position: relative; font-size: .92rem; font-weight: 500; color: var(--ink); padding-block: .4rem; }
+  .nav__link::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--caramel);
+    transform: scaleX(0); transform-origin: right; transition: transform .35s ease;
+  }
+  .nav__link:hover::after, .nav__link.is-active::after { transform: scaleX(1); transform-origin: left; }
+  .nav__link.is-active { color: var(--chocolate); }
+
+  .header__actions { display: flex; align-items: center; gap: .5rem; }
+  :global(.header__wa) { display: none !important; }
+
+  .menu-toggle {
+    width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    background: transparent; border: 1px solid var(--line); color: var(--chocolate);
+  }
+  .menu-toggle :global(.i-close) { display: none; }
+  .header.is-open .menu-toggle :global(.i-open) { display: none; }
+  .header.is-open .menu-toggle :global(.i-close) { display: block; }
+
+  .mobile-menu {
+    position: fixed; inset: var(--header-h) 0 0; background: var(--ivory);
+    padding-block: 2rem 3rem; overflow-y: auto;
+    animation: menuIn .35s ease;
+  }
+  @keyframes menuIn { from { opacity: 0; transform: translateY(-8px); } }
+  .mobile-menu__link {
+    display: flex; align-items: baseline; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line);
+    font-family: var(--font-serif); font-size: 1.9rem; color: var(--chocolate);
+  }
+  .mobile-menu__link span { font-family: var(--font-sans); font-size: .75rem; color: var(--caramel-deep); letter-spacing: .1em; }
+  :global(.mobile-menu__cta) { width: 100%; margin-top: 2rem; }
+
+  @media (min-width: 640px) {
+    :global(.header__wa) { display: inline-flex !important; }
+  }
+  @media (min-width: 1000px) {
+    .nav { display: block; }
+    .menu-toggle, .mobile-menu { display: none !important; }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header')!;
+  const toggle = header.querySelector<HTMLButtonElement>('.menu-toggle')!;
+  const menu = document.getElementById('mobile-menu')!;
+
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setOpen = (open: boolean) => {
+    header.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    menu.hidden = !open;
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', () => setOpen(menu.hidden));
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setOpen(false); });
+
+  // Highlight menu aktif sesuai section
+  const links = header.querySelectorAll<HTMLAnchorElement>('.nav__link');
+  const sections = [...links].map((l) => document.querySelector<HTMLElement>(l.hash)).filter(Boolean) as HTMLElement[];
+  const spy = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (e.isIntersecting) links.forEach((l) => l.classList.toggle('is-active', l.hash === `#${e.target.id}`));
+    }),
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  sections.forEach((s) => spy.observe(s));
+</script>

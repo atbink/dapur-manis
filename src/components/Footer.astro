@@ -1,0 +1,251 @@
+---
+import Logo from './Logo.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import Icon from './Icon.astro';
+import { brand, contact, navigation, waMessages } from '../data/site';
+
+const currentYear = 2026;
+---
+<footer class="footer grain" aria-labelledby="footer-brand">
+  <div class="container footer__inner">
+    <!-- Top Row: Brand & Big CTA -->
+    <div class="footer__top">
+      <div class="footer__brand-block">
+        <Logo tone="light" />
+        <p class="footer__tagline">
+          {brand.tagline} Menyajikan kue dan pastry berkualitas dari dapur rumahan dengan sistem Pre-Order yang mengutamakan kesegaran dan kehigienisan.
+        </p>
+        <div class="footer__wa-wrap">
+          <WhatsAppButton
+            message={waMessages.general}
+            label="Chat WhatsApp Admin"
+            variant="light"
+          />
+        </div>
+      </div>
+
+      <!-- Quick Links Navigation -->
+      <div class="footer__nav-group">
+        <h4 class="footer__heading">Navigasi</h4>
+        <ul class="footer__list">
+          {navigation.map((item) => (
+            <li>
+              <a href={item.href} class="footer__link">
+                {item.label}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="#musiman" class="footer__link">
+              Koleksi Musiman
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jam & Layanan -->
+      <div class="footer__nav-group">
+        <h4 class="footer__heading">Jam Operasional</h4>
+        <ul class="footer__hours">
+          {contact.hours.map((h) => (
+            <li>
+              <span class="hours-lbl">{h.days}</span>
+              <span class="hours-val">{h.time}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="footer__socials">
+          <a
+            href={`https://instagram.com/${contact.instagram}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn"
+            aria-label="Kunjungi Instagram Dapur Manis"
+          >
+            <Icon name="instagram" size={18} />
+            <span>@{contact.instagram}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo Disclaimer Box (YDSN UMKM FREE) -->
+    <div class="footer__demo-note">
+      <div class="demo-badge">YDSN UMKM FREE — DEMO</div>
+      <p>
+        Website ini merupakan demonstrasi katalog digital resmi <strong>DAPUR MANIS</strong> oleh Yayasan Dharma Sahabat Nusantara (YDSN). Seluruh data harga, produk, jadwal, dan kontak diatur secara mudah melalui satu file konfigurasi (<code>src/data/site.ts</code>).
+      </p>
+    </div>
+
+    <!-- Bottom Row: Copyright -->
+    <div class="footer__bottom">
+      <p class="footer__copy">
+        &copy; {currentYear} {brand.name}. Hak Cipta Dilindungi.
+      </p>
+      <p class="footer__made">
+        Dibuat dengan rasa cinta &bull; Home Bakery &amp; Pastry Indonesia
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--chocolate);
+    color: var(--beige);
+    padding-top: clamp(4rem, 8vw, 6rem);
+    padding-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer__top {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 640px) {
+    .footer__top {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+  @media (min-width: 1000px) {
+    .footer__top {
+      grid-template-columns: 2fr 1fr 1.3fr;
+      gap: 4rem;
+    }
+  }
+
+  .footer__brand-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .footer__tagline {
+    font-size: 0.95rem;
+    color: var(--sand);
+    max-width: 44ch;
+    line-height: 1.65;
+  }
+  .footer__wa-wrap {
+    margin-top: 0.5rem;
+  }
+
+  .footer__heading {
+    color: var(--ivory);
+    font-size: 1.15rem;
+    font-family: var(--font-serif);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  .footer__list {
+    display: grid;
+    gap: 0.65rem;
+  }
+  .footer__link {
+    color: var(--sand);
+    font-size: 0.92rem;
+    transition: color 0.25s ease, transform 0.25s ease;
+    display: inline-block;
+  }
+  .footer__link:hover {
+    color: var(--ivory);
+    transform: translateX(3px);
+  }
+
+  .footer__hours {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    color: var(--sand);
+  }
+  .footer__hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(216, 195, 165, 0.15);
+    padding-bottom: 0.35rem;
+  }
+  .hours-lbl {
+    color: var(--beige);
+  }
+
+  .footer__socials {
+    margin-top: 1.5rem;
+  }
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    color: var(--ivory);
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .social-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .social-btn :global(svg) {
+    color: #e4a870;
+  }
+
+  /* Demo note */
+  .footer__demo-note {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(216, 195, 165, 0.25);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    font-size: 0.84rem;
+    color: var(--sand);
+    line-height: 1.6;
+  }
+  .demo-badge {
+    background: var(--caramel);
+    color: var(--ivory);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    flex: none;
+  }
+  .footer__demo-note strong {
+    color: var(--ivory);
+  }
+  .footer__demo-note code {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: #f7d2a7;
+  }
+
+  /* Bottom */
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.82rem;
+    color: var(--sand);
+    opacity: 0.75;
+    border-top: 1px solid rgba(216, 195, 165, 0.15);
+    padding-top: 1.5rem;
+  }
+</style>

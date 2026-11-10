@@ -1,0 +1,67 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { categories, products } from '../data/site';
+import { img } from '../lib/utils';
+---
+<section class="section cats" aria-labelledby="cats-title">
+  <div class="container">
+    <div class="cats__head">
+      <SectionHeading id="cats-title" index="01" eyebrow="Kategori" title='Dari dapur kami, <em class="accent">untuk setiap selera.</em>' />
+      <a href="#produk" class="link-arrow cats__all" data-reveal>Semua menu <Icon name="arrow" size={16} /></a>
+    </div>
+
+    <ul class="cats__grid" role="list">
+      {categories.map((c, i) => {
+        const count = products.filter((p) => p.category === c.id).length;
+        return (
+          <li data-reveal style={`--delay:${i * 0.07}s`}>
+            <a href="#produk" class="cat" data-filter-link={c.id}>
+              <div class="cat__media">
+                <Image src={img(c.image)} alt={c.name} widths={[320, 480, 640]} sizes="(min-width: 1000px) 240px, (min-width: 640px) 30vw, 70vw" class="cat__img" quality={72} />
+              </div>
+              <div class="cat__body">
+                <h3 class="cat__name">{c.name}</h3>
+                <p class="cat__desc">{c.description}</p>
+                <span class="cat__meta">{count} menu <Icon name="arrow" size={14} /></span>
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cats { background: var(--ivory); }
+  .cats__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+  .cats__all { margin-bottom: clamp(2.5rem, 5vw, 3.5rem); }
+
+  .cats__grid {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 72%; gap: 1rem;
+    overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 1rem;
+    margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .cats__grid::-webkit-scrollbar { display: none; }
+  .cats__grid > li { scroll-snap-align: start; }
+
+  .cat { display: flex; flex-direction: column; height: 100%; }
+  .cat__media { aspect-ratio: 4 / 5; border-radius: 999px 999px var(--radius) var(--radius); overflow: hidden; background: var(--beige); }
+  .cat__img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2, .7, .2, 1); }
+  .cat:hover .cat__img { transform: scale(1.06); }
+  .cat__body { padding: 1.1rem .25rem 0; display: grid; gap: .35rem; }
+  .cat__name { font-size: 1.35rem; }
+  .cat__desc { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+  .cat__meta { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--caramel-deep); margin-top: .35rem; transition: gap .25s ease; }
+  .cat:hover .cat__meta { gap: .6rem; }
+
+  @media (min-width: 640px) { .cats__grid { grid-auto-columns: 38%; } }
+  @media (min-width: 1000px) {
+    .cats__grid { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); overflow: visible; margin: 0; padding: 0; gap: 1.5rem; }
+    .cats__grid > li:nth-child(even) .cat { margin-top: 2.5rem; }
+    .cats { padding-bottom: calc(var(--section-y) + 2.5rem); }
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import Icon from './Icon.astro';
+import { preOrderSteps, poSchedule, preOrderNotes, waMessages, type PoStatus } from '../data/site';
+
+const statusLabel: Record<PoStatus, string> = { open: 'Open PO', closed: 'Closed PO', soon: 'Segera Dibuka' };
+// Urutkan: open → soon → closed
+const order: Record<PoStatus, number> = { open: 0, soon: 1, closed: 2 };
+const schedule = [...poSchedule].sort((a, b) => order[a.status] - order[b.status]);
+---
+<section class="section po" id="pesanan" aria-labelledby="po-title">
+  <div class="container po__grid">
+    <div class="po__steps">
+      <SectionHeading id="po-title" index="03" eyebrow="Cara Pre-Order" title='Pesan mudah, <em class="accent">fresh di hari produksi.</em>' text="Kami tidak menyimpan stok. Setiap pesanan dipanggang sesuai jadwal batch agar sampai di tangan Anda dalam kondisi terbaik." />
+
+      <ol class="steps">
+        {preOrderSteps.map((s, i) => (
+          <li class="step" data-reveal style={`--delay:${i * 0.07}s`}>
+            <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3 class="step__title">{s.title}</h3>
+              <p class="step__text">{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="schedule" data-reveal>
+      <div class="schedule__head">
+        <Icon name="calendar" size={22} />
+        <div>
+          <h3>Jadwal Pre-Order</h3>
+          <p>Periode order &amp; tanggal siap ambil/kirim</p>
+        </div>
+      </div>
+
+      <ul class="batches">
+        {schedule.map((b) => (
+          <li class:list={['batch', `batch--${b.status}`]}>
+            <div class="batch__top">
+              <strong class="batch__name">{b.name}</strong>
+              <span class:list={['badge', `badge--${b.status}`]}><span class="dot"></span>{statusLabel[b.status]}</span>
+            </div>
+            <dl class="batch__meta">
+              <div><dt>Order</dt><dd>{b.orderPeriod}</dd></div>
+              <div><dt>Siap</dt><dd>{b.readyDate}</dd></div>
+              <div class="batch__menu"><dt>Menu</dt><dd>{b.menu}</dd></div>
+            </dl>
+            {b.status === 'open' && (
+              <div class="batch__cta">
+                {b.quota && <span class="batch__quota">{b.quota}</span>}
+                <WhatsAppButton message={waMessages.batch(b.name, b.orderPeriod)} label="Ikut PO ini" size="sm" ariaLabel={`Ikut ${b.name} via WhatsApp`} />
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <ul class="notes">
+        {preOrderNotes.map((n) => <li><Icon name="check" size={16} />{n}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .po { background: var(--ivory); }
+  .po__grid { display: grid; gap: 3rem; }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; counter-reset: step; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 1rem; padding-block: 1.1rem; border-top: 1px solid var(--line); }
+  .step:last-child { border-bottom: 1px solid var(--line); }
+  .step__num { font-family: var(--font-serif); font-style: italic; font-size: 1.9rem; line-height: 1; color: var(--caramel); }
+  .step__title { font-size: 1.25rem; margin-bottom: .2rem; }
+  .step__text { color: var(--muted); font-size: .93rem; }
+
+  .schedule {
+    align-self: start; background: var(--cream); border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line);
+  }
+  .schedule__head { display: flex; gap: .9rem; align-items: center; margin-bottom: 1.5rem; color: var(--caramel-deep); }
+  .schedule__head :global(svg) { flex: none; width: 46px; height: 46px; padding: 11px; background: var(--ivory); border-radius: 50%; }
+  .schedule__head h3 { font-size: 1.6rem; }
+  .schedule__head p { color: var(--muted); font-size: .88rem; }
+
+  .batches { display: grid; gap: .75rem; }
+  .batch { background: var(--ivory); border-radius: var(--radius); padding: 1.1rem 1.2rem; border: 1px solid transparent; transition: border-color .3s ease; }
+  .batch--open { border-color: rgba(69, 96, 47, .28); }
+  .batch--closed { opacity: .62; }
+  .batch--closed .batch__name { text-decoration: line-through; text-decoration-color: rgba(58, 36, 25, .35); }
+  .batch__top { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; }
+  .batch__name { font-family: var(--font-serif); font-weight: 500; font-size: 1.15rem; color: var(--chocolate); }
+  .batch__meta { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; margin: .8rem 0 0; font-size: .86rem; }
+  .batch__meta dt { font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .batch__meta dd { margin: 0; color: var(--ink); font-weight: 500; }
+  .batch__menu { grid-column: 1 / -1; }
+  .batch__cta { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--line); }
+  .batch__quota { font-size: .8rem; color: #45602f; font-weight: 600; }
+  .batch__cta :global(.btn) { margin-left: auto; }
+
+  .notes { margin-top: 1.4rem; display: grid; gap: .5rem; font-size: .85rem; color: var(--muted); }
+  .notes li { display: flex; gap: .55rem; align-items: flex-start; }
+  .notes :global(svg) { flex: none; margin-top: .2rem; color: var(--sage); }
+
+  @media (min-width: 1000px) {
+    .po__grid { grid-template-columns: 1fr 1.05fr; gap: 5rem; align-items: start; }
+    .schedule { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  }
+</style>

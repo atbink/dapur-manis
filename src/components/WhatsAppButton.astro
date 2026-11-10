@@ -1,0 +1,27 @@
+---
+/** Tombol WhatsApp reusable — semua CTA memakai komponen ini. */
+import Icon from './Icon.astro';
+import { waLink } from '../lib/utils';
+
+interface Props {
+  message: string;
+  label?: string;
+  variant?: 'wa' | 'ghost' | 'light';
+  size?: 'sm' | 'md';
+  disabled?: boolean;
+  class?: string;
+  ariaLabel?: string;
+}
+const { message, label = 'Pesan via WhatsApp', variant = 'wa', size = 'md', disabled = false, class: cls, ariaLabel } = Astro.props;
+---
+<a
+  href={disabled ? undefined : waLink(message)}
+  target="_blank"
+  rel="noopener noreferrer"
+  class:list={['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', cls]}
+  aria-disabled={disabled ? 'true' : undefined}
+  aria-label={ariaLabel}
+>
+  <Icon name="whatsapp" size={size === 'sm' ? 16 : 18} />
+  <span>{label}</span>
+</a>

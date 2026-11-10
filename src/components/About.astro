@@ -1,0 +1,330 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { about, testimonials } from '../data/site';
+import { img } from '../lib/utils';
+---
+<section class="section about" id="tentang" aria-labelledby="tentang-title">
+  <div class="container">
+    <div class="about__grid">
+      <!-- Media / Photography gallery -->
+      <div class="about__media" data-reveal>
+        <div class="about__media-main">
+          <Image
+            src={img(about.images.main)}
+            alt="Proses pembuatan kue rumahan Dapur Manis"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1000px) 460px, 90vw"
+            class="about__img-main"
+            quality={78}
+          />
+          <div class="about__badge-stat">
+            <span class="about__badge-val">100%</span>
+            <span class="about__badge-lbl">Homemade &amp; Halal</span>
+          </div>
+        </div>
+        <div class="about__media-sub">
+          <Image
+            src={img(about.images.secondary)}
+            alt="Bahan-bahan premium Dapur Manis: butter asli, cokelat Belgia, telur segar"
+            widths={[320, 480]}
+            sizes="(min-width: 1000px) 240px, 45vw"
+            class="about__img-sub"
+            quality={78}
+          />
+        </div>
+      </div>
+
+      <!-- Narrative & Story -->
+      <div class="about__story">
+        <SectionHeading
+          id="tentang-title"
+          index="04"
+          eyebrow={about.eyebrow}
+          title={about.title}
+        />
+
+        <div class="about__text" data-reveal style="--delay: .1s">
+          {about.paragraphs.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+
+        <!-- 3 Core Values -->
+        <ul class="about__values" data-reveal style="--delay: .18s">
+          {about.values.map((v) => (
+            <li class="value">
+              <div class="value__icon">
+                <Icon name={v.icon} size={22} />
+              </div>
+              <div class="value__body">
+                <h3 class="value__title">{v.title}</h3>
+                <p class="value__text">{v.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <!-- Stats Bar -->
+        <div class="about__stats" data-reveal style="--delay: .26s">
+          {about.stats.map((s) => (
+            <div class="stat">
+              <strong class="stat__val">{s.value}</strong>
+              <span class="stat__lbl">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Testimonials -->
+    {testimonials && testimonials.length > 0 && (
+      <div class="testimonials" data-reveal style="--delay: .15s">
+        <div class="testimonials__head">
+          <span class="eyebrow">Apa Kata Mereka</span>
+          <h3 class="testimonials__title">Kebahagiaan di setiap gigitan</h3>
+        </div>
+        <div class="testimonials__grid">
+          {testimonials.map((t) => (
+            <blockquote class="testimonial">
+              <p class="testimonial__quote">“{t.quote}”</p>
+              <footer class="testimonial__author">
+                <Icon name="heart" size={14} class="testimonial__icon" />
+                <cite>{t.name}</cite>
+              </footer>
+            </blockquote>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .about {
+    background: var(--cream);
+    overflow: hidden;
+  }
+  .about__grid {
+    display: grid;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  /* Media layout */
+  .about__media {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .about__media-main {
+    position: relative;
+    width: 82%;
+    max-width: 440px;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .about__img-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about__badge-stat {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    background: rgba(252, 249, 244, 0.94);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .about__badge-val {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--chocolate);
+    line-height: 1;
+  }
+  .about__badge-lbl {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--caramel-deep);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .about__media-sub {
+    position: absolute;
+    right: 0;
+    top: -2rem;
+    width: 42%;
+    max-width: 210px;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 6px solid var(--cream);
+    box-shadow: var(--shadow);
+    transform: rotate(3deg);
+    transition: transform 0.4s ease;
+  }
+  .about__media-sub:hover {
+    transform: rotate(0deg) scale(1.03);
+  }
+  .about__img-sub {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Story and Content */
+  .about__story {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .about__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .about__values {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+  .value {
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+  }
+  .value__icon {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ivory);
+    border: 1px solid var(--line);
+    color: var(--caramel-deep);
+    display: grid;
+    place-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .value__title {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+  .value__text {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  /* Stats */
+  .about__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--line);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .stat__val {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 500;
+    color: var(--chocolate);
+    line-height: 1;
+  }
+  .stat__lbl {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* Testimonials */
+  .testimonials {
+    margin-top: clamp(4rem, 8vw, 6rem);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px dashed var(--line);
+  }
+  .testimonials__head {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .testimonials__title {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  }
+  .testimonials__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .testimonials__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .testimonial {
+    margin: 0;
+    background: var(--ivory);
+    padding: 1.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .testimonial__quote {
+    font-size: 0.98rem;
+    color: var(--ink);
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cocoa);
+  }
+  .testimonial__author cite {
+    font-style: normal;
+  }
+  :global(.testimonial__icon) {
+    color: var(--caramel);
+    fill: currentColor;
+  }
+
+  @media (min-width: 1000px) {
+    .about__grid {
+      grid-template-columns: 1fr 1.1fr;
+      gap: 5rem;
+    }
+    .about__media {
+      justify-content: flex-start;
+    }
+    .about__media-sub {
+      right: -1rem;
+      top: auto;
+      bottom: -2rem;
+    }
+  }
+</style>

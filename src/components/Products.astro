@@ -1,0 +1,91 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import ProductCard from './ProductCard.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { products, categories, waMessages } from '../data/site';
+
+// Produk favorit (featured) tampil lebih dulu
+const sorted = [...products].sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
+const usedCats = categories.filter((c) => products.some((p) => p.category === c.id));
+---
+<section class="section products" id="produk" aria-labelledby="produk-title">
+  <div class="container">
+    <div class="products__head">
+      <SectionHeading id="produk-title" index="02" eyebrow="Produk Unggulan" title='Menu favorit <em class="accent">minggu ini.</em>' text="Semua produk dibuat berdasarkan pesanan (Pre-Order). Klik “Pesan” — pesan WhatsApp akan terisi otomatis sesuai produk pilihan Anda." />
+    </div>
+
+    <div class="filters" role="tablist" aria-label="Filter kategori produk" data-reveal>
+      <button class="filter is-active" role="tab" aria-selected="true" data-filter="all">Semua</button>
+      {usedCats.map((c) => (
+        <button class="filter" role="tab" aria-selected="false" data-filter={c.id}>{c.name}</button>
+      ))}
+    </div>
+
+    <div class="products__grid" id="product-grid">
+      {sorted.map((p, i) => <ProductCard product={p} index={i} />)}
+    </div>
+
+    <aside class="products__cta" data-reveal>
+      <div>
+        <h3>Ingin pesan dalam jumlah besar?</h3>
+        <p>Untuk arisan, acara kantor, syukuran, atau snack box — kami bisa bantu racik paketnya.</p>
+      </div>
+      <WhatsAppButton message={waMessages.bulk} label="Konsultasi Pesanan" variant="light" />
+    </aside>
+  </div>
+</section>
+
+<style>
+  .products { background: var(--cream); }
+  .filters {
+    display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none;
+    margin: -1rem calc(var(--gutter) * -1) 2rem; padding: .25rem var(--gutter);
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter {
+    flex: none; min-height: 42px; padding: .5rem 1.1rem; border-radius: 999px;
+    border: 1px solid rgba(58, 36, 25, .18); background: transparent;
+    font-size: .88rem; font-weight: 500; color: var(--cocoa);
+    transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .filter:hover { border-color: var(--chocolate); }
+  .filter.is-active { background: var(--chocolate); border-color: var(--chocolate); color: var(--ivory); }
+
+  .products__grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .products__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .products__grid { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; } }
+  @media (min-width: 1200px) { .products__grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .products__cta {
+    margin-top: 3rem; padding: clamp(1.75rem, 4vw, 2.75rem);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;
+    background: var(--chocolate); color: var(--beige); border-radius: var(--radius-lg);
+    background-image: radial-gradient(circle at 100% 0%, rgba(228, 168, 112, .22), transparent 45%);
+  }
+  .products__cta h3 { color: var(--ivory); font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: .4rem; }
+  .products__cta p { max-width: 52ch; opacity: .8; }
+</style>
+
+<script>
+  const grid = document.getElementById('product-grid')!;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const cards = grid.querySelectorAll<HTMLElement>('[data-category]');
+
+  function applyFilter(id: string) {
+    buttons.forEach((b) => {
+      const on = b.dataset.filter === id;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    cards.forEach((c) => {
+      const show = id === 'all' || c.dataset.category === id;
+      c.hidden = !show;
+      if (show) c.classList.add('is-visible');
+    });
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => applyFilter(b.dataset.filter!)));
+  // Klik kartu kategori → filter otomatis
+  document.querySelectorAll<HTMLAnchorElement>('[data-filter-link]').forEach((a) =>
+    a.addEventListener('click', () => applyFilter(a.dataset.filterLink!)),
+  );
+</script>

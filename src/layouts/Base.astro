@@ -1,0 +1,97 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import { brand, contact, products } from '../data/site';
+import { img } from '../lib/utils';
+
+const { seo, name, siteUrl } = brand;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl).href;
+const og = await getImage({ src: img(seo.ogImage), width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 });
+const ogUrl = new URL(og.src, Astro.site ?? siteUrl).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Bakery',
+  name,
+  slogan: brand.tagline,
+  description: seo.description,
+  url: siteUrl,
+  image: ogUrl,
+  telephone: `+${contact.whatsapp}`,
+  email: contact.email,
+  priceRange: 'Rp',
+  servesCuisine: 'Indonesian bakery & pastry',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contact.address.street,
+    addressLocality: contact.address.city,
+    addressRegion: contact.address.region,
+    postalCode: contact.address.postalCode,
+    addressCountry: 'ID',
+  },
+  openingHours: contact.openingHoursSchema,
+  sameAs: [`https://instagram.com/${contact.instagram}`],
+  hasMenu: {
+    '@type': 'Menu',
+    hasMenuSection: {
+      '@type': 'MenuSection',
+      name: 'Menu Pre-Order',
+      hasMenuItem: products.map((p) => ({
+        '@type': 'MenuItem',
+        name: p.name,
+        description: p.description,
+        offers: { '@type': 'Offer', price: p.price, priceCurrency: 'IDR' },
+      })),
+    },
+  },
+};
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <meta name="keywords" content={seo.keywords} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f6efe4" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:site_name" content={name} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Lewati ke konten</a>
+    <slot />
+    <script>
+      // Reveal-on-scroll
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+          }),
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>
